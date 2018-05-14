@@ -1,0 +1,14 @@
+if  [[ $(hostname) = 'korah' ]]; then
+  PS1='\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+  PS1='\[\033[01;33m\]\w\[\033[00m\]\$ '
+fi
+DEFAULT_PROMPT=$PS1
+
+function simple_prompt() {
+  PS1='$ '
+}
+
+function normal_prompt() {
+  PS1=$DEFAULT_PROMPT
+}

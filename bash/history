@@ -1,0 +1,5 @@
+# history
+HISTCONTROL=ignoredups:ignorespace
+shopt -s histappend
+HISTSIZE=1000000
+HISTFILESIZE=2000000

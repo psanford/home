@@ -1,0 +1,2 @@
+# disable apt-get suggestions
+unset command_not_found_handle

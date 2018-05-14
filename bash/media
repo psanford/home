@@ -1,0 +1,27 @@
+alias kqed='mplayer http://streams2.kqed.org:80/kqedradio'
+alias kalw='mplayer http://live.str3am.com:2430/'
+alias police1="mplayer http://stream.scansf.com:8000/scansf.996xt"
+alias police2="mplayer http://stream.scansf.com:8000/scansf.hp"
+
+function hourly_news() {
+  mplayer "$(curl http://api.npr.org/v1/stations/1/newscasts/ | sed -n -e  's/.*<mp3>\(.*\)<\/mp3>.*/\1/p')"
+}
+
+function itunes_podcast_url() {
+  url=$1
+
+  if [ -z $url ]; then
+      echo "usage: itunes_podcast_url <itunes_url>" >&2
+      return
+  fi
+
+  # url should look like: 'https://itunes.apple.com/us/podcast/some_podcast_name/id394775318'
+  curl -A 'iTunes/10.1 (Windows; U; Microsoft Windows XP Home Edition Service Pack 2 (Build 2600)) DPI/96' -s $url | \
+      grep feed-url | \
+      head -1 | \
+      sed -re 's/.*feed-url="([^"]+)".*/\1/'
+}
+
+function say() {
+  echo "$@" | festival --tts
+}

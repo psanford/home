@@ -1,0 +1,48 @@
+if [ -d ${HOME}/bin ]; then
+  PATH=$PATH:${HOME}/bin;
+fi
+
+if [ -d ${HOME}/projects/go ]; then
+  export GOPATH=${HOME}/projects/go
+fi
+
+if [ -d ${GOPATH}/bin ]; then
+  PATH=$PATH:${GOPATH}/bin;
+fi
+
+function go_path_here() {
+  export GOPATH=$(pwd)
+}
+
+function go_path_in_tree() {
+  local dir=`pwd`
+  local found=0
+
+  while [ "$dir" != "/" ]; do
+    dir=`dirname "$dir"`;
+    if [ -d "$dir/src" -a -d "$dir/pkg" -a -d "$dir/bin" ]; then
+      found=1;
+      break;
+    fi;
+  done
+
+  if [ $found -eq 0 ]; then
+    dir=`pwd`
+    while [ "$dir" != "/" ]; do
+      dir=`dirname "$dir"`;
+      base=`basename $dir`;
+
+      if [ -d "$dir/src" -a "$base" = "go" ]; then
+        found=1;
+        break;
+      fi;
+    done
+  fi;
+
+  if [ $found -eq 1 ]; then
+    export GOPATH="$dir"
+    echo "GOPATH is now $dir"
+  else
+    echo "No GOPATH found"
+  fi
+}

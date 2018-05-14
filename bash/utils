@@ -1,0 +1,99 @@
+alias bonjourls="avahi-browse -a -r -t"
+
+alias curls="curl --proto-default https"
+
+unalias ls 2>&1 > /dev/null
+alias ls='ls --color=auto'
+
+alias ec='emacsclient -n'
+
+alias bc="bc -l"
+
+alias command_grep="compgen -ac | grep"
+
+alias private_vim="vim -i NONE"
+alias vim_private="vim -i NONE"
+
+function pbcopy() {
+  dest=${1-primary}
+  xclip -selection $dest
+}
+
+function pbpaste() {
+  dest=${1-primary}
+  xclip -selection $dest -o
+}
+
+function baud_rates() {
+  echo "2400
+4800
+9600
+19200
+38400
+57600
+115200";
+}
+
+function shared_secret_generator() {
+  len=${1-16}
+  pwgen -c -B -n -s $len
+}
+
+function highlight() {
+  egrep --color=auto "$1|"
+}
+
+function load_aws_creds_into_env() {
+  creds=$AWS_CREDENTIAL_FILE
+
+if [ -z "$creds" ]; then
+    echo 'Could not find credential file!'
+  else
+    export AWS_ACCESS_KEY_ID=$(sed -nr 's/AWSAccessKeyId=(.*)/\1/p' $creds)
+    export AWS_SECRET_ACCESS_KEY=$(sed -nr 's/AWSSecretKey=(.*)/\1/p' $creds)
+  fi
+}
+
+function hexcalc() {
+  echo "obase=16;ibase=16;$@" | bc;
+}
+
+function mac_regex() {
+  echo $1 | perl -ple 's/[:-]/[:-]/g'
+}
+
+function mac_clean() {
+  echo $1 | perl -ple 's/[:_]//g; s/(..)(?!$)/\1:/g;  $_ = uc'
+}
+
+function mac_to_underscore() {
+  echo $1 | perl -ple 's/[:_]//g; s/(..)(?!$)/\1_/g; $_ = uc'
+}
+
+alias dumpcert="openssl x509 -noout -text -in"
+
+function x509_unbundle() {
+  if [ -z "$1" ]; then
+    echo "usage: x509_unbundle <chain.pem>"
+    return
+  fi
+  openssl crl2pkcs7 -nocrl -certfile $1 | openssl pkcs7 -print_certs -text -noout
+}
+
+function s3url() {
+  if [ -z "$1" ]; then
+    echo "usage: s3url <s3://somepath>"
+    return
+  fi
+
+
+  local url=$(echo "$1" | sed -r -e 's|^s3://||')
+  echo "https://s3.amazonaws.com/$url"
+}
+
+alias json_pp=ppjson
+
+function awkn() {
+  AAA=$1
+  awk "{print \$$AAA}"
+}
