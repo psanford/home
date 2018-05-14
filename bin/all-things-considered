@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+require 'net/http'
+require 'uri'
+require 'json'
+uri = URI('https://www.npr.org/programs/all-things-considered/')
+body = Net::HTTP.get(uri)
+
+matches = []
+body.scan(/data-play-all='([^']+)'/) {|m| matches << m[0] }
+
+if matches.length == 0
+  STDERR.puts "Could not find playlist data"
+  exit 1
+end
+
+if matches.length > 1
+  STDERR.puts "Multiple elements looked like playlist data"
+  # exit 1
+end
+
+playlist = JSON[matches[0]]
+
+File.open('/tmp/all_things_considered.m3u', 'w') do |f|
+  playlist["audioData"].each do |clip|
+    f.puts("# #{clip['title']} #{clip['storyUrl']}")
+    f.puts(clip['audioUrl'])
+  end
+end
+
+exec("mplayer", "-playlist", "/tmp/all_things_considered.m3u")
